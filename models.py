@@ -35,9 +35,10 @@ class IQN(nn.Module):
                 nn.init.xavier_uniform_(m.weight)
 
     def forward(self, state, tau, num_quantiles):
+        state = state.to(self.device)
         input_size = state.size()[0]  # batch_size(train) or 1(get_action)
-        tau = tau.expand(input_size * num_quantiles, self.quantile_embedding_dim)
-        pi_mtx = torch.Tensor(np.pi * np.arange(0, self.quantile_embedding_dim)).expand(input_size * num_quantiles, self.quantile_embedding_dim)
+        tau = tau.expand(input_size * num_quantiles, self.quantile_embedding_dim).to(self.device)
+        pi_mtx = torch.Tensor(np.pi * np.arange(0, self.quantile_embedding_dim)).expand(input_size * num_quantiles, self.quantile_embedding_dim).to(self.device)
         cos_tau = torch.cos(tau * pi_mtx)
 
         phi = self.phi(cos_tau)
